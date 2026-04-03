@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soundboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="grid">
+        {% for btn in buttons %}
+        <div class="card"
+             id="btn-{{ btn.id }}"
+             data-id="{{ btn.id }}"
+             style="--btn-color: {{ btn.color }}"
+             onclick="pressButton({{ btn.id }})">
+            <span class="label">{{ btn.label }}</span>
+            {% if btn.sound_filename %}
+            <span class="sound-name">{{ btn.sound_filename }}</span>
+            {% endif %}
+            <button class="edit-btn" onclick="event.stopPropagation(); openEdit({{ btn.id }}, '{{ btn.label }}', '{{ btn.color }}')">&#9881;</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Edit modal -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Edit Button</h3>
+            <input type="hidden" id="edit-id">
+            <div class="form-group">
+                <label for="edit-label">Label</label>
+                <input type="text" id="edit-label" maxlength="50">
+            </div>
+            <div class="form-group">
+                <label for="edit-color">Color</label>
+                <input type="color" id="edit-color">
+            </div>
+            <div class="form-group">
+                <label for="edit-sound">Sound File</label>
+                <input type="file" id="edit-sound" accept="audio/*">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-save" onclick="saveEdit()">Save</button>
+                <button class="btn btn-delete-sound" onclick="deleteSound()">Remove Sound</button>
+                <button class="btn btn-cancel" onclick="closeEdit()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        function pressButton(buttonId) {
+            socket.emit('button_press', { button_id: buttonId });
+        }
+
+        socket.on('button_feedback', (data) => {
+            const card = document.getElementById('btn-' + data.button_id);
+            if (card) {
+                card.classList.add('active');
+                setTimeout(() => card.classList.remove('active'), 300);
+            }
+        });
+
+        function openEdit(id, label, color) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-label').value = label;
+            document.getElementById('edit-color').value = color;
+            document.getElementById('edit-sound').value = '';
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeEdit() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        async function saveEdit() {
+            const id = document.getElementById('edit-id').value;
+            const label = document.getElementById('edit-label').value;
+            const color = document.getElementById('edit-color').value;
+            const soundFile = document.getElementById('edit-sound').files[0];
+
+            // Update label and color
+            await fetch('/api/buttons/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ label, color })
+            });
+
+            // Upload sound if selected
+            if (soundFile) {
+                const formData = new FormData();
+                formData.append('sound', soundFile);
+                await fetch('/api/buttons/' + id + '/sound', {
+                    method: 'POST',
+                    body: formData
+                });
+            }
+
+            closeEdit();
+            location.reload();
+        }
+
+        async function deleteSound() {
+            const id = document.getElementById('edit-id').value;
+            await fetch('/api/buttons/' + id + '/sound', { method: 'DELETE' });
+            closeEdit();
+            location.reload();
+        }
+    </script>
+</body>
+</html>
