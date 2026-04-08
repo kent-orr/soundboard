@@ -4,6 +4,60 @@ A Raspberry Pi Zero W2-based soundboard application.
 
 ---
 
+## Button Layout
+
+The soundboard has 8 physical buttons arranged in a **4 × 2 grid**. Each label shows the button color and row number:
+
+```
+  ┌──────┬──────┬──────┬──────┐
+  │  R1  │  G1  │  Y1  │  B1  │  ← Row 1
+  ├──────┼──────┼──────┼──────┤
+  │  R2  │  G2  │  Y2  │  W1  │  ← Row 2
+  └──────┴──────┴──────┴──────┘
+```
+
+| Label | Color  | BCM GPIO | Board Pin |
+|-------|--------|----------|-----------|
+| R1    | Red    | GPIO17   | 11        |
+| G1    | Green  | GPIO27   | 13        |
+| Y1    | Yellow | GPIO22   | 15        |
+| B1    | Blue   | GPIO23   | 16        |
+| R2    | Red    | GPIO24   | 18        |
+| G2    | Green  | GPIO25   | 22        |
+| Y2    | Yellow | GPIO5    | 29        |
+| W1    | White  | GPIO6    | 31        |
+
+> Each button connects between its GPIO pin and GND. GPIO pins use internal pull-up resistors — pressing a button pulls the line LOW.
+
+### GPIO Header with Button Assignments
+
+Button labels shown as `(label)` on their assigned pin:
+
+```
+                       3V3  [ 1] [ 2]  5V
+             GPIO2 (SDA1)  [ 3] [ 4]  5V
+             GPIO3 (SCL1)  [ 5] [ 6]  GND
+                   GPIO4  [ 7] [ 8]  GPIO14 (TXD0)
+                     GND  [ 9] [10]  GPIO15 (RXD0)
+             GPIO17 (R1)  [11] [12]  GPIO18 (PCM_CLK)
+             GPIO27 (G1)  [13] [14]  GND
+             GPIO22 (Y1)  [15] [16]  GPIO23 (B1)
+                     3V3  [17] [18]  GPIO24 (R2)
+      GPIO10 (SPI0_MOSI)  [19] [20]  GND
+       GPIO9 (SPI0_MISO)  [21] [22]  GPIO25 (G2)
+      GPIO11 (SPI0_SCLK)  [23] [24]  GPIO8  (SPI0_CE0_N)
+                     GND  [25] [26]  GPIO7  (SPI0_CE1_N)
+       GPIO0 (ID_SD/I2C)  [27] [28]  GPIO1  (ID_SC/I2C)
+              GPIO5 (Y2)  [29] [30]  GND
+              GPIO6 (W1)  [31] [32]  GPIO12 (PWM0)
+          GPIO13 (PWM1)   [33] [34]  GND
+   GPIO19 (PCM_FS/SPI1)   [35] [36]  GPIO16 (SPI1_CE2_N)
+                  GPIO26  [37] [38]  GPIO20 (PCM_DIN/SPI1)
+                     GND  [39] [40]  GPIO21 (PCM_DOUT/SPI1)
+```
+
+---
+
 ## Raspberry Pi Zero W2 GPIO Pinout
 
 The Pi Zero W2 has a 40-pin GPIO header. Pins are numbered in two ways:
