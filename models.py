@@ -3,14 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 DEFAULT_BUTTONS = [
-    {"position": 0, "label": "Sound 1", "color": "#e74c3c", "gpio_pin": 17},
-    {"position": 1, "label": "Sound 2", "color": "#e67e22", "gpio_pin": 27},
-    {"position": 2, "label": "Sound 3", "color": "#f1c40f", "gpio_pin": 22},
-    {"position": 3, "label": "Sound 4", "color": "#2ecc71", "gpio_pin": 23},
-    {"position": 4, "label": "Sound 5", "color": "#3498db", "gpio_pin": 24},
-    {"position": 5, "label": "Sound 6", "color": "#9b59b6", "gpio_pin": 25},
-    {"position": 6, "label": "Sound 7", "color": "#1abc9c", "gpio_pin": 5},
-    {"position": 7, "label": "Sound 8", "color": "#e84393", "gpio_pin": 6},
+    # Row 1: left to right
+    {"position": 0, "label": "R1", "color": "#e74c3c", "gpio_pin": 17},
+    {"position": 1, "label": "G1", "color": "#2ecc71", "gpio_pin": 27},
+    {"position": 2, "label": "B1", "color": "#3498db", "gpio_pin": 22},
+    {"position": 3, "label": "Y1", "color": "#f1c40f", "gpio_pin": 23},
+    {"position": 4, "label": "W1", "color": "#ecf0f1", "gpio_pin": 24},
+    # Row 2: left to right
+    {"position": 5, "label": "R2", "color": "#e74c3c", "gpio_pin": 25},
+    {"position": 6, "label": "G2", "color": "#2ecc71", "gpio_pin": 5},
+    {"position": 7, "label": "B2", "color": "#3498db", "gpio_pin": 6},
+    {"position": 8, "label": "Y2", "color": "#f1c40f", "gpio_pin": 16},
+    {"position": 9, "label": "W2", "color": "#ecf0f1", "gpio_pin": 26},
 ]
 
 
